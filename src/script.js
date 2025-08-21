@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Timer } from 'three/addons/misc/Timer.js'
+import { Sky } from 'three/addons/objects/Sky.js'
 import GUI from 'lil-gui'
 
 /**
@@ -151,13 +152,18 @@ for (let i = 0; i < 30; i++) {
  * Lights
  */
 // Ambient light
-const ambientLight = new THREE.AmbientLight('#ff7a7a', 0.1)
+const ambientLight = new THREE.AmbientLight('#fff', 0.1)
 scene.add(ambientLight)
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight('#ff7a7a', .3)
+const directionalLight = new THREE.DirectionalLight('#86cdff', .3)
 directionalLight.position.set(3, 2, -8)
 scene.add(directionalLight)
+
+// Door light
+const doorLight = new THREE.PointLight('#ff7d46', 5)
+doorLight.position.set(0, 2.2, 2.001)
+scene.add(doorLight)
 
 // GUI Controls for Lights
 const lightsFolder = gui.addFolder('Lights')
@@ -220,6 +226,18 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+const sky = new Sky()
+sky.scale.set(100, 100, 100)
+scene.add(sky)
+
+sky.material.uniforms['turbidity'].value = 10
+sky.material.uniforms['rayleigh'].value = 3
+sky.material.uniforms['mieCoefficient'].value = 0.1
+sky.material.uniforms['mieDirectionalG'].value = 0.95
+sky.material.uniforms['sunPosition'].value.set(0.3, -0.038, -0.95)
+
+scene.fog = new THREE.FogExp2(0x02343f, .1)
 
 /**
  * Animate
